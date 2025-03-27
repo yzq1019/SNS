@@ -1,32 +1,33 @@
 import pandas as pd
 
-# 读取 CSV 文件
+# Read CSV files
 df_houses = pd.read_csv("london_houses.csv")
 df_prices = pd.read_csv("London.csv")
 
-# 查看数据样本
-print("📌 房价数据样本:")
+# View sample data
+print("📌 Sample house price data:")
 print(df_prices.head())
 
-print("\n📌 房屋特征数据样本:")
+print("\n📌 Sample housing characteristics data:")
 print(df_houses.head())
 
-# 检查缺失值
-print("\n📌 缺失值统计:")
+# Check for missing values
+print("\n📌 Missing value statistics:")
 print(df_prices.isnull().sum())
 print(df_houses.isnull().sum())
 
-print(df_prices["Location"].unique())  # 使用正确大小写
-
-# 查看 Neighborhood 的唯一值
-print("📌 `london_houses.csv` 中的 `Neighborhood` 唯一值:")
-print(df_houses["Neighborhood"].unique())
-
-# 查看 Borough 的唯一值
-print("\n📌 `London.csv` 中的 `Location` 唯一值:")
+# View unique values of Location
 print(df_prices["Location"].unique())
 
-# 创建 `Neighborhood` 到 `Borough` 的映射关系
+# View unique Neighborhood values
+print("📌 Unique values in `Neighborhood` from 'london_houses.csv':")
+print(df_houses["Neighborhood"].unique())
+
+# View unique Location values
+print("\n📌 Unique values in `Location` from 'London.csv':")
+print(df_prices["Location"].unique())
+
+# Create mapping from Neighborhood to Borough (Location)
 neighborhood_to_location = {
     "Notting Hill": "Kensington and Chelsea",
     "Soho": "Westminster",
@@ -56,33 +57,39 @@ neighborhood_to_location = {
     "South Bank": "Lambeth",
 }
 
-# 映射 `Neighborhood` 到 `Location`
+# Map Neighborhood to standardized Location
 df_houses["Mapped_location"] = df_houses["Neighborhood"].map(neighborhood_to_location)
 
-# 检查未匹配的 `Neighborhood`
+# Check unmatched Neighborhoods
 unmatched = df_houses[df_houses["Mapped_location"].isnull()]["Neighborhood"].unique()
-print("❌ 以下 `Neighborhood` 仍然未匹配到 `location`:")
+print("❌ The following `Neighborhood` values could not be matched to any `Location`:")
 print(unmatched)
 
+# Merge the two datasets
 df_merged = pd.merge(df_houses, df_prices, left_on="Neighborhood", right_on="Location", how="left")
 
-# 检查合并后的数据
-print("📌 合并后数据样本:")
+# Check merged data
+print("📌 Sample of merged data:")
 print(df_merged.head())
 
-print("📌 未匹配的 `Neighborhood`（NaN `Location`）:")
+# Show unmatched rows after merging
+print("📌 Rows with unmatched `Neighborhood` (NaN `Location`):")
 print(df_merged[df_merged["Location"].isnull()])
 
+# Save cleaned data to CSV
 df_merged.to_csv("cleaned_london_data.csv", index=False)
-print("✅ 数据清理完成，已保存为 cleaned_london_data.csv")
+print("✅ Data cleaning complete. File saved as 'cleaned_london_data.csv'")
 
-print("📌 合并后数据的基本信息:")
+# Display dataset info
+print("📌 Info summary of merged dataset:")
 print(df_merged.info())
 
-print("\n📌 主要数值列的统计信息:")
+# Show descriptive statistics for numeric columns
+print("\n📌 Descriptive statistics of key numerical columns:")
 print(df_merged.describe())
 
-print("\n📌 是否还有缺失值？")
+# Final check for any remaining missing values
+print("\n📌 Remaining missing values (if any):")
 print(df_merged.isnull().sum())
 
 
