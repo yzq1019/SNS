@@ -32,7 +32,7 @@ def train_and_init_model():
 
     # Define Preprocessing Function
     def preprocess_data(df):
-        # 去除冗余或无关列
+        # Delete useless Columns
         cols_to_drop = [
             'Unnamed: 0', 'price', 'Area in sq ft',
             'No.of Bedrooms', 'No. of Bathrooms',
@@ -115,7 +115,7 @@ def train_and_init_model():
         X_train_processed, y_train,
         validation_data=(X_val_processed, y_val),
         epochs=50,
-        batch_size=64,  # 尝试更大的批量
+        batch_size=64,  
         callbacks=[early_stop],
         verbose=1
     )
