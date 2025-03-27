@@ -10,8 +10,7 @@ PORT = 65432
 
 def prompt_for_int(prompt_text):
     """
-    提示用户输入数字，并进行简单的 int 转换
-    如果转换失败会再次提示
+    Tell user to type an integer.
     """
     while True:
         user_input = input(prompt_text).strip()
@@ -24,7 +23,7 @@ def prompt_for_int(prompt_text):
 def main():
     print("Hello, I'm the Oracle. How can I help you today?")
     while True:
-        # 在循环开始，询问用户是否继续预测，或直接退出
+        # Asking the user to predict or quit before collecting information
         user_choice = input("\nType 'predict' to estimate a new house price, or 'exit' to quit: ").strip().lower()
         if user_choice == 'quit':
             print("Exiting... Goodbye!")
@@ -33,7 +32,7 @@ def main():
             print("Invalid choice, please try again.")
             continue
         print("Let's collect 18 pieces of information to predict your house price.")
-        # ===== 询问 18 个字段 =====
+        # ===== Collect 18 pieces of information in order to predict =====
         address = input("1) Address: ")
         neighborhood = input("2) Neighborhood: ")
         bedrooms = prompt_for_int("3) Bedrooms (integer): ")
@@ -53,7 +52,7 @@ def main():
         no_receptions = prompt_for_int("17) No. of Receptions (integer): ")
         postal_code = input("18) Postal Code (e.g. NW1 0NE): ")
 
-        # ===== 组装字典 =====
+        # ===== assemble into dictionary =====
         new_house = {
             'Address': address,
             'Neighborhood': neighborhood,
@@ -75,18 +74,18 @@ def main():
             'Postal Code': postal_code
         }
 
-        # ===== 与服务器交互 =====
+        # ===== Connect to the Server using TCP =====
         try:
-            # 1) 创建 TCP 客户端套接字并连接服务器
+            # 1) Create a TCP socket and connect to Server
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client_socket.connect((HOST, PORT))
             print(f"\nConnected to server {HOST}:{PORT}")
 
-            # 2) 发送 JSON 格式的数据
+            # 2) Send data in JSON format
             request_json = json.dumps(new_house)
             client_socket.sendall(request_json.encode('utf-8'))
 
-            # 3) 接收服务器返回的预测结果
+            # 3) Reveive the data from Server and present rresult
             response_data = client_socket.recv(4096)
             if response_data:
                 response = json.loads(response_data.decode('utf-8'))
