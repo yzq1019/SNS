@@ -95,11 +95,11 @@ def train_and_init_model():
     # Neural network model structure
     model = Sequential([
         Dense(256, activation='relu', input_shape=(X_train_processed.shape[1],)),
-        Dropout(0.3),
+        Dropout(0.1),
         Dense(128, activation='relu'),
-        Dropout(0.3),
+        Dropout(0.1),
         Dense(64, activation='relu'),
-        Dropout(0.3),
+        Dropout(0.1),
         Dense(1)
     ])
 
