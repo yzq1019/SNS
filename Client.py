@@ -25,7 +25,7 @@ def main():
     while True:
         # Asking the user to predict or quit before collecting information
         user_choice = input("\nType 'predict' to estimate a new house price, or 'exit' to quit: ").strip().lower()
-        if user_choice == 'quit':
+        if user_choice == 'exit':
             print("Exiting... Goodbye!")
             break
         elif user_choice != 'predict':
