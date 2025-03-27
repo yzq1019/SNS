@@ -23,14 +23,14 @@ preprocessor = None
 def train_and_init_model():
     global model, preprocessor
 
-    # 重新加载训练集和验证集
+    # Read Tranining Set and Validation Set
     train_path = './london_train_data.csv'
     val_path = './london_validation_data.csv'
 
     train_df = pd.read_csv(train_path)
     val_df = pd.read_csv(val_path)
 
-    # 定义统一的预处理函数
+    # Define Preprocessing Function
     def preprocess_data(df):
         # 去除冗余或无关列
         cols_to_drop = [
@@ -41,7 +41,7 @@ def train_and_init_model():
         ]
         df = df.drop(columns=[col for col in cols_to_drop if col in df.columns])
 
-        # 保留建模需要的列
+        # Keep useful Columns
         selected_columns = [
             'Address', 'Neighborhood', 'Bedrooms', 'Bathrooms', 'Square Meters',
             'Building Age', 'Garden', 'Garage', 'Floors', 'Property Type',
@@ -52,18 +52,18 @@ def train_and_init_model():
 
         return df
 
-    # 应用清洗函数
+    # Data Cleaning
     train_clean = preprocess_data(train_df)
     val_clean = preprocess_data(val_df)
 
-    # 分离特征与标签
+    # Split Features
     X_train = train_clean.drop(columns=['Price'])
     y_train = train_clean['Price']
 
     X_val = val_clean.drop(columns=['Price'])
     y_val = val_clean['Price']
 
-    # 数值型和类别型特征
+    
     numerical_features = [
         'Bedrooms', 'Bathrooms', 'Square Meters', 'Building Age',
         'Garden', 'Garage', 'Floors', 'No. of Receptions'
@@ -73,7 +73,7 @@ def train_and_init_model():
         'Interior Style', 'View', 'Materials', 'Building Status', 'Postal Code'
     ]
 
-    # 构建特征工程预处理器
+    # Building a Feature Engineering Preprocessor
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', StandardScaler(), numerical_features),
@@ -81,18 +81,18 @@ def train_and_init_model():
         ]
     )
 
-    # 拟合训练集并转换训练/验证集
+    # Fitting the training set and transforming the training/validation set
     X_train_processed = preprocessor.fit_transform(X_train)
     X_val_processed = preprocessor.transform(X_val)
 
-    # 输出处理后的形状信息
+    # Output of processed shape information
     print("Numbers of Training set ：", X_train.shape[0])
     print("Numbers of Training set Features：", X_train_processed.shape[1])
     print("Numbers of Validation set：", X_val.shape[0])
     print("Numbers of Validation set Features：", X_val_processed.shape[1])
     print("Preprocess Success")
 
-    # 神经网络模型结构
+    # Neural network model structure
     model = Sequential([
         Dense(256, activation='relu', input_shape=(X_train_processed.shape[1],)),
         Dropout(0.3),
@@ -103,14 +103,14 @@ def train_and_init_model():
         Dense(1)
     ])
 
-    # 编译模型
+
     model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
-    # 早停防止过拟合
+    # Earlystop
     early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
     from tensorflow.keras.optimizers import Adam
     model.compile(optimizer=Adam(learning_rate=0.001), loss='mse', metrics=['mae'])
-    # 训练模型
+    # Model Training
     model.fit(
         X_train_processed, y_train,
         validation_data=(X_val_processed, y_val),
@@ -120,10 +120,10 @@ def train_and_init_model():
         verbose=1
     )
 
-    # 预测验证集
+    # Prediction of Validation Set
     y_pred = model.predict(X_val_processed).flatten()
 
-    # 模型评估
+    # Model access
     mae = mean_absolute_error(y_val, y_pred)
     rmse = root_mean_squared_error(y_val, y_pred)
     r2 = r2_score(y_val, y_pred)
@@ -133,7 +133,7 @@ def train_and_init_model():
     print(f"RMSE : £{rmse:.2f}")
     print(f"R²   : {r2:.4f}")
 
-    # 保存模型
+    # Save the Model
     model.save('house_price_model.keras')
     joblib.dump(preprocessor, 'preprocessor.pkl')
 
