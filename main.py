@@ -118,42 +118,12 @@ mae = mean_absolute_error(y_val, y_pred)
 rmse = mean_squared_error(y_val, y_pred, squared=False)
 r2 = r2_score(y_val, y_pred)
 
-print(f"\n✅ 评估结果：")
+print(f"\n✅ Evaluation Result：")
 print(f"MAE  : £{mae:.2f}")
 print(f"RMSE : £{rmse:.2f}")
 print(f"R²   : {r2:.4f}")
 
 
-# 新房产样本（字典）
-new_house = {
-    'Address':'111',
-    'Neighborhood': 'Camden',
-    'Bedrooms': 3,
-    'Bathrooms': 2,
-    'Square Meters': 85,
-    'Building Age': 5,
-    'Garden': 1,
-    'Garage': 0,
-    'Floors': 2,
-    'Property Type': 'Flat',
-    'Heating Type': 'Central',
-    'Balcony': 'Yes',
-    'Interior Style': 'Modern',
-    'View': 'Street',
-    'Materials': 'Brick',
-    'Building Status': 'Completed',
-    'No. of Receptions': 1,
-    'Postal Code': 'NW1 0NE'
-}
 
-# 转为 DataFrame（模型要求二维输入）
-new_df = pd.DataFrame([new_house])
-
-# 应用之前训练好的 preprocessor 进行编码 & 标准化
-new_processed = preprocessor.transform(new_df)
-
-# 预测房价
-predicted_price = model.predict(new_processed)[0][0]
-print(f"💰 预测房价：£{predicted_price:,.2f}")
 
 
